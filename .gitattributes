@@ -1,0 +1,2 @@
+lib/libopenthread-ftd-b91.a filter=lfs diff=lfs merge=lfs -text
+lib/libopenthread-ftd-b92.a filter=lfs diff=lfs merge=lfs -text
