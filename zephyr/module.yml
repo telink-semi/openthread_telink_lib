@@ -1,0 +1,4 @@
+name: openthread_telink_lib
+build:
+  cmake: .
+  kconfig: Kconfig

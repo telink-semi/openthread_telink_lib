@@ -1,0 +1,16 @@
+# Copyright (c) 2023 Telink Semiconductor
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_SERIES_RISCV_TELINK_B9X && NET_L2_OPENTHREAD
+
+choice OPENTHREAD_IMPLEMENTATION
+	default OPENTHREAD_SOURCES
+
+config OPENTHREAD_TELINK_LIBRARY
+	bool "OpenThread from library"
+	help
+		Use Zephyr's OpenThread port from library.
+
+endchoice
+
+endif # SOC_SERIES_RISCV_TELINK_B9X && NET_L2_OPENTHREAD
