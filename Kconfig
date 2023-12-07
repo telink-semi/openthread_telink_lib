@@ -7,10 +7,10 @@ choice OPENTHREAD_IMPLEMENTATION
 	default OPENTHREAD_SOURCES
 
 config OPENTHREAD_TELINK_LIBRARY
-	bool "OpenThread from library"
+	bool "OpenThread from Telink library"
 	help
-		Use Zephyr's OpenThread port from library.
+		Use Zephyr's OpenThread port from Telink library.
 
-endchoice
+endchoice # OPENTHREAD_IMPLEMENTATION
 
 endif # SOC_SERIES_RISCV_TELINK_B9X && NET_L2_OPENTHREAD
