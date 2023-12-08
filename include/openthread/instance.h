@@ -53,7 +53,7 @@ extern "C" {
  * @note This number versions both OpenThread platform and user APIs.
  *
  */
-#define OPENTHREAD_API_VERSION (311)
+#define OPENTHREAD_API_VERSION (223)
 
 /**
  * @addtogroup api-instance
@@ -196,7 +196,6 @@ enum
     OT_CHANGED_JOINER_STATE                 = 1 << 27, ///< Joiner state changed
     OT_CHANGED_ACTIVE_DATASET               = 1 << 28, ///< Active Operational Dataset changed
     OT_CHANGED_PENDING_DATASET              = 1 << 29, ///< Pending Operational Dataset changed
-    OT_CHANGED_NAT64_TRANSLATOR_STATE       = 1 << 30, ///< The state of NAT64 translator changed
 };
 
 /**
@@ -251,7 +250,7 @@ void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback a
 void otInstanceReset(otInstance *aInstance);
 
 /**
- * Deletes all the settings stored on non-volatile memory, and then triggers a platform reset.
+ * This method deletes all the settings stored on non-volatile memory, and then triggers platform reset.
  *
  * @param[in]  aInstance  A pointer to an OpenThread instance.
  *

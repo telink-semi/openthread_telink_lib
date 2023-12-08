@@ -66,8 +66,6 @@ typedef enum otIcmp6Type
     OT_ICMP6_TYPE_ECHO_REPLY        = 129, ///< Echo Reply
     OT_ICMP6_TYPE_ROUTER_SOLICIT    = 133, ///< Router Solicitation
     OT_ICMP6_TYPE_ROUTER_ADVERT     = 134, ///< Router Advertisement
-    OT_ICMP6_TYPE_NEIGHBOR_SOLICIT  = 135, ///< Neighbor Solicitation
-    OT_ICMP6_TYPE_NEIGHBOR_ADVERT   = 136, ///< Neighbor Advertisement
 } otIcmp6Type;
 
 /**
@@ -117,8 +115,8 @@ typedef struct otIcmp6Header otIcmp6Header;
  * @param[in]  aIcmpHeader   A pointer to the received ICMPv6 header.
  *
  */
-typedef void (*otIcmp6ReceiveCallback)(void                *aContext,
-                                       otMessage           *aMessage,
+typedef void (*otIcmp6ReceiveCallback)(void *               aContext,
+                                       otMessage *          aMessage,
                                        const otMessageInfo *aMessageInfo,
                                        const otIcmp6Header *aIcmpHeader);
 
@@ -129,7 +127,7 @@ typedef void (*otIcmp6ReceiveCallback)(void                *aContext,
 typedef struct otIcmp6Handler
 {
     otIcmp6ReceiveCallback mReceiveCallback; ///< The ICMPv6 received callback
-    void                  *mContext;         ///< A pointer to arbitrary context information.
+    void *                 mContext;         ///< A pointer to arbitrary context information.
     struct otIcmp6Handler *mNext;            ///< A pointer to the next handler in the list.
 } otIcmp6Handler;
 
@@ -190,8 +188,8 @@ otError otIcmp6RegisterHandler(otInstance *aInstance, otIcmp6Handler *aHandler);
  *                           May be zero.
  *
  */
-otError otIcmp6SendEchoRequest(otInstance          *aInstance,
-                               otMessage           *aMessage,
+otError otIcmp6SendEchoRequest(otInstance *         aInstance,
+                               otMessage *          aMessage,
                                const otMessageInfo *aMessageInfo,
                                uint16_t             aIdentifier);
 
