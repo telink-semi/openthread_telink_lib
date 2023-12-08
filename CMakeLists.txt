@@ -10,16 +10,9 @@ if (CONFIG_OPENTHREAD_TELINK_LIBRARY)
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 	)
 
-	if (CONFIG_SOC_RISCV_TELINK_B91)
-		zephyr_link_libraries(
-			${CMAKE_CURRENT_SOURCE_DIR}/lib/libopenthread-ftd-b91.a
-		)
-	elseif (CONFIG_SOC_RISCV_TELINK_B92)
-		zephyr_link_libraries(
-			${CMAKE_CURRENT_SOURCE_DIR}/lib/libopenthread-ftd-b92.a
-		)
-	else()
-		message( FATAL_ERROR "Not supported SOC" )
-	endif() # CONFIG_SOC_RISCV_TELINK_
+
+	zephyr_link_libraries(
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/libopenthread-ftd.a
+	)
 
 endif() # CONFIG_OPENTHREAD_TELINK_LIBRARY
