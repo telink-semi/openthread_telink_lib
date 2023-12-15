@@ -15,4 +15,6 @@ if (CONFIG_OPENTHREAD_TELINK_LIBRARY)
 		${CMAKE_CURRENT_SOURCE_DIR}/lib/libopenthread-ftd.a
 	)
 
+	add_library(ot-config INTERFACE)
+
 endif() # CONFIG_OPENTHREAD_TELINK_LIBRARY
