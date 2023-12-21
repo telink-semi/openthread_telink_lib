@@ -14,12 +14,38 @@ config OPENTHREAD_TELINK_LIBRARY
 
 endchoice # OPENTHREAD_IMPLEMENTATION
 
+choice OPENTHREAD_TELINK_LIBRARY_VERSION
+	prompt "OpenThread Telink library version"
+	default OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
+	help
+		Select OpenThread Telink library version
+		depending on required features set.
+
+config OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
+	bool "OpenThread from Telink extended library"
+	depends on OPENTHREAD_TELINK_LIBRARY
+	help
+		Use Zephyr's OpenThread port from Telink extended library.
+		MTD v1.3 with extended features set.
+
+config OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
+	bool "OpenThread from Telink reduced library"
+	depends on OPENTHREAD_TELINK_LIBRARY
+	help
+		Use Zephyr's OpenThread port from Telink reduced library.
+		MTD v1.3 with reduced features set.
+
+endchoice # OPENTHREAD_TELINK_LIBRARY_VERSION
+
+################################################################
+# OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
+################################################################
 
 choice OPENTHREAD_STACK_VERSION
-	default OPENTHREAD_THREAD_VERSION_1_3 if OPENTHREAD_TELINK_LIBRARY
+	default OPENTHREAD_THREAD_VERSION_1_3 if OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
 endchoice # OPENTHREAD_STACK_VERSION
 
-config OPENTHREAD_TELINK_LIBRARY
+config OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
 	select OPENTHREAD_SRP_CLIENT
 	select OPENTHREAD_JOINER
 	select OPENTHREAD_LINK_METRICS_SUBJECT
@@ -40,9 +66,29 @@ config OPENTHREAD_TELINK_LIBRARY
 	select OPENTHREAD_MANUAL_START
 
 config OPENTHREAD_NUM_MESSAGE_BUFFERS
-	default 256 if OPENTHREAD_TELINK_LIBRARY
+	default 256 if OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
 
 config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
-	default 480 if OPENTHREAD_TELINK_LIBRARY
+	default 480 if OPENTHREAD_TELINK_LIBRARY_VERSION_EXTENDED
+
+################################################################
+# OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
+################################################################
+
+choice OPENTHREAD_STACK_VERSION
+	default OPENTHREAD_THREAD_VERSION_1_3 if OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
+endchoice # OPENTHREAD_STACK_VERSION
+
+config OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
+	select OPENTHREAD_SRP_CLIENT
+	select OPENTHREAD_DNS_CLIENT
+	select OPENTHREAD_SLAAC
+	select OPENTHREAD_MANUAL_START
+
+config OPENTHREAD_NUM_MESSAGE_BUFFERS
+	default 64 if OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
+
+config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
+	default 480 if OPENTHREAD_TELINK_LIBRARY_VERSION_REDUCED
 
 endif # SOC_SERIES_RISCV_TELINK_B9X && NET_L2_OPENTHREAD
