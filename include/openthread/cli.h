@@ -46,15 +46,14 @@ extern "C" {
 #endif
 
 /**
- * This structure represents a CLI command.
- *
+ * Represents a CLI command.
  */
 typedef struct otCliCommand
 {
     const char *mName; ///< A pointer to the command string.
-    void (*mCommand)(void *  aContext,
-                     uint8_t aArgsLength,
-                     char *  aArgs[]); ///< A function pointer to process the command.
+    otError (*mCommand)(void   *aContext,
+                        uint8_t aArgsLength,
+                        char   *aArgs[]); ///< A function pointer to process the command.
 } otCliCommand;
 
 /**
@@ -64,18 +63,16 @@ typedef struct otCliCommand
  *   This module includes functions that control the Thread stack's execution.
  *
  * @{
- *
  */
 
 /**
- * This function pointer is called to notify about Console output.
+ * Pointer is called to notify about Console output.
  *
  * @param[out] aContext    A user context pointer.
  * @param[in]  aFormat     The format string.
  * @param[in]  aArguments  The format string arguments.
  *
  * @returns                Number of bytes written by the callback.
- *
  */
 typedef int (*otCliOutputCallback)(void *aContext, const char *aFormat, va_list aArguments);
 
@@ -85,15 +82,13 @@ typedef int (*otCliOutputCallback)(void *aContext, const char *aFormat, va_list 
  * @param[in]  aInstance   The OpenThread instance structure.
  * @param[in]  aCallback   A callback method called to process CLI output.
  * @param[in]  aContext    A user context pointer.
- *
  */
 void otCliInit(otInstance *aInstance, otCliOutputCallback aCallback, void *aContext);
 
 /**
- * This method is called to feed in a console input line.
+ * Is called to feed in a console input line.
  *
  * @param[in]  aBuf        A pointer to a null-terminated string.
- *
  */
 void otCliInputLine(char *aBuf);
 
@@ -104,15 +99,16 @@ void otCliInputLine(char *aBuf);
  * @param[in]  aLength        @p aUserCommands length.
  * @param[in]  aContext       @p The context passed to the handler.
  *
+ * @retval OT_ERROR_NONE    Successfully updated command table with commands from @p aUserCommands.
+ * @retval OT_ERROR_FAILED  Maximum number of command entries have already been set.
  */
-void otCliSetUserCommands(const otCliCommand *aUserCommands, uint8_t aLength, void *aContext);
+otError otCliSetUserCommands(const otCliCommand *aUserCommands, uint8_t aLength, void *aContext);
 
 /**
  * Write a number of bytes to the CLI console as a hex string.
  *
  * @param[in]  aBytes   A pointer to data which should be printed.
  * @param[in]  aLength  @p aBytes length.
- *
  */
 void otCliOutputBytes(const uint8_t *aBytes, uint8_t aLength);
 
@@ -121,7 +117,6 @@ void otCliOutputBytes(const uint8_t *aBytes, uint8_t aLength);
  *
  * @param[in]  aFmt   A pointer to the format string.
  * @param[in]  ...    A matching list of arguments.
- *
  */
 void otCliOutputFormat(const char *aFmt, ...);
 
@@ -131,7 +126,6 @@ void otCliOutputFormat(const char *aFmt, ...);
  * If the @p aError is `OT_ERROR_PENDING` nothing will be outputted.
  *
  * @param[in]  aError Error code value.
- *
  */
 void otCliAppendResult(otError aError);
 
@@ -142,13 +136,19 @@ void otCliAppendResult(otError aError);
  * @param[in]  aLogRegion  The log region.
  * @param[in]  aFormat     A pointer to the format string.
  * @param[in]  aArgs       va_list matching aFormat.
- *
  */
 void otCliPlatLogv(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aFormat, va_list aArgs);
 
 /**
- * @}
+ * Callback to allow vendor specific commands to be added to the user command table.
  *
+ * Available when `OPENTHREAD_CONFIG_CLI_VENDOR_COMMANDS_ENABLE` is enabled and
+ * `OPENTHREAD_CONFIG_CLI_MAX_USER_CMD_ENTRIES` is greater than 1.
+ */
+extern void otCliVendorSetUserCommands(void);
+
+/**
+ * @}
  */
 
 #ifdef __cplusplus

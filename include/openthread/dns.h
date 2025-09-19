@@ -51,7 +51,6 @@ extern "C" {
  *   This module includes functions that control DNS communication.
  *
  * @{
- *
  */
 
 #define OT_DNS_MAX_NAME_SIZE 255 ///< Maximum name string size (includes null char at the end of string).
@@ -62,15 +61,16 @@ extern "C" {
 
 #define OT_DNS_TXT_KEY_MAX_LENGTH 9 ///< Recommended maximum length of TXT record key string (RFC 6763 - section 6.4).
 
+#define OT_DNS_TXT_KEY_ITER_MAX_LENGTH 64 ///< Maximum length of TXT key string supported by `otDnsTxtEntryIterator`.
+
 /**
- * This structure represents a TXT record entry representing a key/value pair (RFC 6763 - section 6.3).
+ * Represents a TXT record entry representing a key/value pair (RFC 6763 - section 6.3).
  *
  * The string buffers pointed to by `mKey` and `mValue` MUST persist and remain unchanged after an instance of such
  * structure is passed to OpenThread (as part of `otSrpClientService` instance).
  *
  * An array of `otDnsTxtEntry` entries are used in `otSrpClientService` to specify the full TXT record (a list of
  * entries).
- *
  */
 typedef struct otDnsTxtEntry
 {
@@ -87,28 +87,26 @@ typedef struct otDnsTxtEntry
      *
      * If `mKey` is NULL, then `mValue` buffer is treated as an already encoded TXT-DATA and is appended as is in the
      * DNS message.
-     *
      */
-    const char *   mKey;
+    const char    *mKey;
     const uint8_t *mValue;       ///< The TXT record value or already encoded TXT-DATA (depending on `mKey`).
     uint16_t       mValueLength; ///< Number of bytes in `mValue` buffer.
 } otDnsTxtEntry;
 
 /**
- * This structure represents an iterator for TXT record entires (key/value pairs).
+ * Represents an iterator for TXT record entries (key/value pairs).
  *
  * The data fields in this structure are intended for use by OpenThread core and caller should not read or change them.
- *
  */
 typedef struct otDnsTxtEntryIterator
 {
     const void *mPtr;
     uint16_t    mData[2];
-    char        mChar[OT_DNS_TXT_KEY_MAX_LENGTH + 1];
+    char        mChar[OT_DNS_TXT_KEY_ITER_MAX_LENGTH + 1];
 } otDnsTxtEntryIterator;
 
 /**
- * This function initializes a TXT record iterator.
+ * Initializes a TXT record iterator.
  *
  * The buffer pointer @p aTxtData and its content MUST persist and remain unchanged while @p aIterator object
  * is being used.
@@ -116,20 +114,19 @@ typedef struct otDnsTxtEntryIterator
  * @param[in] aIterator       A pointer to the iterator to initialize (MUST NOT be NULL).
  * @param[in] aTxtData        A pointer to buffer containing the encoded TXT data.
  * @param[in] aTxtDataLength  The length (number of bytes) of @p aTxtData.
- *
  */
 void otDnsInitTxtEntryIterator(otDnsTxtEntryIterator *aIterator, const uint8_t *aTxtData, uint16_t aTxtDataLength);
 
 /**
- * This function parses the TXT data from an iterator and gets the next TXT record entry (key/value pair).
+ * Parses the TXT data from an iterator and gets the next TXT record entry (key/value pair).
  *
  * The @p aIterator MUST be initialized using `otDnsInitTxtEntryIterator()` before calling this function and the TXT
  * data buffer used to initialize the iterator MUST persist and remain unchanged. Otherwise the behavior of this
  * function is undefined.
  *
- * If the parsed key string length is smaller than or equal to `OT_DNS_TXT_KEY_MAX_LENGTH` (recommended max key length)
- * the key string is returned in `mKey` in @p aEntry. But if the key is longer, then `mKey` is set to NULL and the
- * entire encoded TXT entry string is returned in `mValue` and `mValueLength`.
+ * If the parsed key string length is smaller than or equal to `OT_DNS_TXT_KEY_ITER_MAX_LENGTH` the key string is
+ * returned in `mKey` in @p aEntry. But if the key is longer, then `mKey` is set to NULL and the entire encoded TXT
+ * entry string is returned in `mValue` and `mValueLength`.
  *
  * @param[in]  aIterator   A pointer to the iterator (MUST NOT be NULL).
  * @param[out] aEntry      A pointer to a `otDnsTxtEntry` structure to output the parsed/read entry (MUST NOT be NULL).
@@ -137,12 +134,28 @@ void otDnsInitTxtEntryIterator(otDnsTxtEntryIterator *aIterator, const uint8_t *
  * @retval OT_ERROR_NONE       The next entry was parsed successfully. @p aEntry is updated.
  * @retval OT_ERROR_NOT_FOUND  No more entries in the TXT data.
  * @retval OT_ERROR_PARSE      The TXT data from @p aIterator is not well-formed.
- *
  */
 otError otDnsGetNextTxtEntry(otDnsTxtEntryIterator *aIterator, otDnsTxtEntry *aEntry);
 
 /**
- * This function enables/disables the "DNS name compression" mode.
+ * Encodes a given list of TXT record entries (key/value pairs) into TXT data (following format specified by RFC 6763).
+ *
+ * @param[in]      aTxtEntries      Pointer to an array of `otDnsTxtEntry`.
+ * @param[in]      aNumTxtEntries   Number of entries in @p aTxtEntries array.
+ * @param[out]     aTxtData         A pointer to a buffer to output the encoded TXT data.
+ * @param[in,out]  aTxtDataLength   On input, size of buffer @p aTxtData. On output, length of the encoded TXT data.
+ *
+ * @retval OT_ERROR_NONE          Encoded TXT data successfully, @p aTxtData and @p aTxtDataLength are updated.
+ * @retval OT_ERROR_INVALID_ARGS  The @p aTxtEntries is not valid.
+ * @retval OT_ERROR_NO_BUS        Could not fit the encoded data in @p aTxtData buffer with its @p aTxtDataLength.
+ */
+otError otDnsEncodeTxtData(const otDnsTxtEntry *aTxtEntries,
+                           uint16_t             aNumTxtEntries,
+                           uint8_t             *aTxtData,
+                           uint16_t            *aTxtDataLength);
+
+/**
+ * Enables/disables the "DNS name compression" mode.
  *
  * By default DNS name compression is enabled. When disabled, DNS names are appended as full and never compressed. This
  * is applicable to OpenThread's DNS and SRP client/server modules.
@@ -153,23 +166,20 @@ otError otDnsGetNextTxtEntry(otDnsTxtEntryIterator *aIterator, otDnsTxtEntry *aE
  * instances (i.e., calling this function enables/disables the compression mode on all OpenThread instances).
  *
  * @param[in] aEnabled   TRUE to enable the "DNS name compression" mode, FALSE to disable.
- *
  */
 void otDnsSetNameCompressionEnabled(bool aEnabled);
 
 /**
- * This function indicates whether the "DNS name compression" mode is enabled or not.
+ * Indicates whether the "DNS name compression" mode is enabled or not.
  *
  * This is intended for testing only and available when `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE` config is enabled.
  *
  * @returns TRUE if the "DNS name compression" mode is enabled, FALSE otherwise.
- *
  */
 bool otDnsIsNameCompressionEnabled(void);
 
 /**
  * @}
- *
  */
 
 #ifdef __cplusplus
