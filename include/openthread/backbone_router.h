@@ -48,12 +48,10 @@ extern "C" {
  *  This module includes functions for the OpenThread Backbone Router Service.
  *
  * @{
- *
  */
 
 /**
- * This structure represents Backbone Router configuration.
- *
+ * Represents Backbone Router configuration.
  */
 typedef struct otBackboneRouterConfig
 {
@@ -64,20 +62,18 @@ typedef struct otBackboneRouterConfig
 } otBackboneRouterConfig;
 
 /**
- * This function gets the Primary Backbone Router information in the Thread Network.
+ * Gets the Primary Backbone Router information in the Thread Network.
  *
  * @param[in]   aInstance            A pointer to an OpenThread instance.
  * @param[out]  aConfig              A pointer to where to put Primary Backbone Router information.
  *
  * @retval OT_ERROR_NONE              Successfully got Primary Backbone Router information.
  * @retval OT_ERROR_NOT_FOUND         No Primary Backbone Router exists.
- *
  */
 otError otBackboneRouterGetPrimary(otInstance *aInstance, otBackboneRouterConfig *aConfig);
 
 /**
  * @}
- *
  */
 
 #ifdef __cplusplus

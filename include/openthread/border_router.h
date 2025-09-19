@@ -35,6 +35,7 @@
 #ifndef OPENTHREAD_BORDER_ROUTER_H_
 #define OPENTHREAD_BORDER_ROUTER_H_
 
+#include <openthread/border_routing.h>
 #include <openthread/ip6.h>
 #include <openthread/netdata.h>
 
@@ -49,117 +50,10 @@ extern "C" {
  *  This module includes functions to manage local network data with the OpenThread Border Router.
  *
  * @{
- *
  */
 
 /**
- * This method initializes the Border Routing Manager on given infrastructure interface.
- *
- * @note  This method MUST be called before any other otBorderRouting* APIs.
- *
- * @param[in]  aInstance          A pointer to an OpenThread instance.
- * @param[in]  aInfraIfIndex      The infrastructure interface index.
- * @param[in]  aInfraIfIsRunning  A boolean that indicates whether the infrastructure
- *                                interface is running.
- *
- * @retval  OT_ERROR_NONE           Successfully started the Border Routing Manager on given infrastructure.
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager has already been initialized.
- * @retval  OT_ERROR_INVALID_ARGS   The index of the infrastructure interface is not valid.
- * @retval  OT_ERROR_FAILED         Internal failure. Usually due to failure in generating random prefixes.
- *
- * @sa otPlatInfraIfStateChanged.
- *
- */
-otError otBorderRoutingInit(otInstance *aInstance, uint32_t aInfraIfIndex, bool aInfraIfIsRunning);
-
-/**
- * Enables or disables the Border Routing Manager.
- *
- * @note  The Border Routing Manager is disabled by default.
- *
- * @param[in]  aInstance  A pointer to an OpenThread instance.
- * @param[in]  aEnabled   A boolean to enable/disable the routing manager.
- *
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
- * @retval  OT_ERROR_NONE           Successfully enabled/disabled the Border Routing Manager.
- *
- */
-otError otBorderRoutingSetEnabled(otInstance *aInstance, bool aEnabled);
-
-/**
- * This function gets the preference used when advertising Route Info Options (e.g., for discovered OMR prefixes) in
- * Router Advertisement messages sent over the infrastructure link.
- *
- * @param[in] aInstance A pointer to an OpenThread instance.
- *
- * @returns The OMR prefix advertisement preference.
- *
- */
-otRoutePreference otBorderRoutingGetRouteInfoOptionPreference(otInstance *aInstance);
-
-/**
- * This function sets the preference to use when advertising Route Info Options (e.g., for discovered OMR prefixes) in
- * Router Advertisement messages sent over the infrastructure link.
- *
- * By default BR will use 'medium' preference level but this function allows the default value to be changed. As an
- * example, it can be set to 'low' preference in the case where device is a temporary BR (a mobile BR or a
- * battery-powered BR) to indicate that other BRs (if any) should be preferred over this BR on the infrastructure link.
- *
- * @param[in] aInstance     A pointer to an OpenThread instance.
- * @param[in] aPreference   The route preference to use.
- *
- */
-void otBorderRoutingSetRouteInfoOptionPreference(otInstance *aInstance, otRoutePreference aPreference);
-
-/**
- * Gets the Off-Mesh-Routable (OMR) Prefix, for example `fdfc:1ff5:1512:5622::/64`.
- *
- * An OMR Prefix is a randomly generated 64-bit prefix that's published in the
- * Thread network if there isn't already an OMR prefix. This prefix can be reached
- * from the local Wi-Fi or Ethernet network.
- *
- * @param[in]   aInstance  A pointer to an OpenThread instance.
- * @param[out]  aPrefix    A pointer to where the prefix will be output to.
- *
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
- * @retval  OT_ERROR_NONE           Successfully retrieved the OMR prefix.
- *
- */
-otError otBorderRoutingGetOmrPrefix(otInstance *aInstance, otIp6Prefix *aPrefix);
-
-/**
- * Gets the On-Link Prefix for the adjacent infrastructure link, for example `fd41:2650:a6f5:0::/64`.
- *
- * An On-Link Prefix is a randomly generated 64-bit prefix that's advertised on the infrastructure
- * link if there isn't already a usable on-link prefix being advertised on the link.
- *
- * @param[in]   aInstance  A pointer to an OpenThread instance.
- * @param[out]  aPrefix    A pointer to where the prefix will be output to.
- *
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
- * @retval  OT_ERROR_NONE           Successfully retrieved the on-link prefix.
- *
- */
-otError otBorderRoutingGetOnLinkPrefix(otInstance *aInstance, otIp6Prefix *aPrefix);
-
-/**
- * Gets the local NAT64 Prefix of the Border Router.
- *
- * NAT64 Prefix might not be advertised in the Thread network.
- *
- * `OPENTHREAD_CONFIG_BORDER_ROUTING_NAT64_ENABLE` must be enabled.
- *
- * @param[in]   aInstance   A pointer to an OpenThread instance.
- * @param[out]  aPrefix     A pointer to where the prefix will be output to.
- *
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
- * @retval  OT_ERROR_NONE           Successfully retrieved the NAT64 prefix.
- *
- */
-otError otBorderRoutingGetNat64Prefix(otInstance *aInstance, otIp6Prefix *aPrefix);
-
-/**
- * This method provides a full or stable copy of the local Thread Network Data.
+ * Provides a full or stable copy of the local Thread Network Data.
  *
  * @param[in]      aInstance    A pointer to an OpenThread instance.
  * @param[in]      aStable      TRUE when copying the stable version, FALSE when copying the full version.
@@ -199,7 +93,7 @@ otError otBorderRouterAddOnMeshPrefix(otInstance *aInstance, const otBorderRoute
 otError otBorderRouterRemoveOnMeshPrefix(otInstance *aInstance, const otIp6Prefix *aPrefix);
 
 /**
- * This function gets the next On Mesh Prefix in the local Network Data.
+ * Gets the next On Mesh Prefix in the local Network Data.
  *
  * @param[in]      aInstance  A pointer to an OpenThread instance.
  * @param[in,out]  aIterator  A pointer to the Network Data iterator context. To get the first on-mesh entry
@@ -208,11 +102,10 @@ otError otBorderRouterRemoveOnMeshPrefix(otInstance *aInstance, const otIp6Prefi
  *
  * @retval OT_ERROR_NONE       Successfully found the next On Mesh prefix.
  * @retval OT_ERROR_NOT_FOUND  No subsequent On Mesh prefix exists in the Thread Network Data.
- *
  */
-otError otBorderRouterGetNextOnMeshPrefix(otInstance *           aInstance,
+otError otBorderRouterGetNextOnMeshPrefix(otInstance            *aInstance,
                                           otNetworkDataIterator *aIterator,
-                                          otBorderRouterConfig * aConfig);
+                                          otBorderRouterConfig  *aConfig);
 
 /**
  * Add an external route configuration to the local network data.
@@ -244,7 +137,7 @@ otError otBorderRouterAddRoute(otInstance *aInstance, const otExternalRouteConfi
 otError otBorderRouterRemoveRoute(otInstance *aInstance, const otIp6Prefix *aPrefix);
 
 /**
- * This function gets the next external route in the local Network Data.
+ * Gets the next external route in the local Network Data.
  *
  * @param[in]      aInstance  A pointer to an OpenThread instance.
  * @param[in,out]  aIterator  A pointer to the Network Data iterator context. To get the first external route entry
@@ -253,9 +146,8 @@ otError otBorderRouterRemoveRoute(otInstance *aInstance, const otIp6Prefix *aPre
  *
  * @retval OT_ERROR_NONE       Successfully found the next External Route.
  * @retval OT_ERROR_NOT_FOUND  No subsequent external route entry exists in the Thread Network Data.
- *
  */
-otError otBorderRouterGetNextRoute(otInstance *           aInstance,
+otError otBorderRouterGetNextRoute(otInstance            *aInstance,
                                    otNetworkDataIterator *aIterator,
                                    otExternalRouteConfig *aConfig);
 
@@ -274,8 +166,34 @@ otError otBorderRouterGetNextRoute(otInstance *           aInstance,
 otError otBorderRouterRegister(otInstance *aInstance);
 
 /**
- * @}
+ * Function pointer callback which is invoked when Network Data (local or leader) gets full.
  *
+ * @param[in] aContext A pointer to arbitrary context information.
+ */
+typedef void (*otBorderRouterNetDataFullCallback)(void *aContext);
+
+/**
+ * Sets the callback to indicate when Network Data gets full.
+ *
+ * Requires `OPENTHREAD_CONFIG_BORDER_ROUTER_SIGNAL_NETWORK_DATA_FULL`.
+ *
+ * The callback is invoked whenever:
+ * - The device is acting as a leader and receives a Network Data registration from a Border Router (BR) that it cannot
+ *   add to Network Data (running out of space).
+ * - The device is acting as a BR and new entries cannot be added to its local Network Data.
+ * - The device is acting as a BR and tries to register its local Network Data entries with the leader, but determines
+ *    that its local entries will not fit.
+ *
+ * @param[in]  aInstance    A pointer to an OpenThread instance.
+ * @param[in]  aCallback    The callback.
+ * @param[in]  aContext     A pointer to arbitrary context information used with @p aCallback.
+ */
+void otBorderRouterSetNetDataFullCallback(otInstance                       *aInstance,
+                                          otBorderRouterNetDataFullCallback aCallback,
+                                          void                             *aContext);
+
+/**
+ * @}
  */
 
 #ifdef __cplusplus

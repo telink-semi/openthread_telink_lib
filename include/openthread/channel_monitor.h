@@ -60,34 +60,31 @@ extern "C" {
  *   occupancy).
  *
  * @{
- *
  */
 
 /**
- * This function enables/disables the Channel Monitoring operation.
+ * Enables or disables the Channel Monitoring operation.
  *
  * Once operation starts, any previously collected data is cleared. However, after operation is disabled, the previous
  * collected data is still valid and can be read.
  *
- * @note OpenThread core internally enables/disables the Channel Monitoring operation when the IPv6 interface is
- * brought up/down (i.e., call to `otIp6SetEnabled()`).
+ * @note OpenThread core internally enables or disables the Channel Monitoring operation when the IPv6 interface is
+ * brought up or down, for example in a call to `otIp6SetEnabled()`.
  *
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  * @param[in]  aEnabled        TRUE to enable/start Channel Monitoring operation, FALSE to disable/stop it.
  *
  * @retval OT_ERROR_NONE      Channel Monitoring state changed successfully
  * @retval OT_ERROR_ALREADY   Channel Monitoring is already in the same state.
- *
  */
 otError otChannelMonitorSetEnabled(otInstance *aInstance, bool aEnabled);
 
 /**
- * This function indicates whether the Channel Monitoring operation is enabled and running.
+ * Indicates whether the Channel Monitoring operation is enabled and running.
  *
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  *
  * @returns TRUE if the Channel Monitoring operation is enabled, FALSE otherwise.
- *
  */
 bool otChannelMonitorIsEnabled(otInstance *aInstance);
 
@@ -97,7 +94,6 @@ bool otChannelMonitorIsEnabled(otInstance *aInstance);
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  *
  * @returns  The channel monitor sample interval in milliseconds.
- *
  */
 uint32_t otChannelMonitorGetSampleInterval(otInstance *aInstance);
 
@@ -107,7 +103,6 @@ uint32_t otChannelMonitorGetSampleInterval(otInstance *aInstance);
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  *
  * @returns  The RSSI threshold in dBm.
- *
  */
 int8_t otChannelMonitorGetRssiThreshold(otInstance *aInstance);
 
@@ -117,7 +112,6 @@ int8_t otChannelMonitorGetRssiThreshold(otInstance *aInstance);
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  *
  * @returns  The averaging sample window.
- *
  */
 uint32_t otChannelMonitorGetSampleWindow(otInstance *aInstance);
 
@@ -130,7 +124,6 @@ uint32_t otChannelMonitorGetSampleWindow(otInstance *aInstance);
  * @param[in]  aInstance       A pointer to an OpenThread instance.
  *
  * @returns  Total number of RSSI samples (per channel) taken so far.
- *
  */
 uint32_t otChannelMonitorGetSampleCount(otInstance *aInstance);
 
@@ -151,13 +144,11 @@ uint32_t otChannelMonitorGetSampleCount(otInstance *aInstance);
  * @param[in]  aChannel        The channel for which to get the link occupancy.
  *
  * @returns The current channel occupancy for the given channel.
- *
  */
 uint16_t otChannelMonitorGetChannelOccupancy(otInstance *aInstance, uint8_t aChannel);
 
 /**
  * @}
- *
  */
 
 #ifdef __cplusplus

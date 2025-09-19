@@ -51,13 +51,13 @@
  *    @endcode
  *
  * @{
- *
  */
 
 #ifndef OPENTHREAD_PLATFORM_TOOLCHAIN_H_
 #define OPENTHREAD_PLATFORM_TOOLCHAIN_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,7 +73,6 @@ extern "C" {
  *       as attribute [[nodiscard]]).
  * @note To suppress the 'unused-result' warning/error, please use the
  *       '-Wno-unused-result' compiler option.
- *
  */
 #if defined(__clang__) && (__clang_major__ >= 4 || (__clang_major__ >= 3 && __clang_minor__ >= 9))
 #define OT_MUST_USE_RESULT __attribute__((warn_unused_result))
@@ -85,7 +84,6 @@ extern "C" {
  * @def OT_TOOL_PACKED_BEGIN
  *
  * Compiler-specific indication that a class or struct must be byte packed.
- *
  */
 
 /**
@@ -93,21 +91,35 @@ extern "C" {
  *
  * Indicate to the compiler a nested struct or union to be packed
  * within byte packed class or struct.
- *
  */
 
 /**
  * @def OT_TOOL_PACKED_END
  *
  * Compiler-specific indication at the end of a byte packed class or struct.
- *
  */
 
 /**
  * @def OT_TOOL_WEAK
  *
  * Compiler-specific weak symbol modifier.
+ */
+
+/**
+ * @def OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK
  *
+ * Specifies that a function or method takes `printf` style arguments and should be type-checked against
+ * a format string.
+ *
+ * Must be added after the function/method declaration. For example:
+ *
+ *    `void MyPrintf(void *aObject, const char *aFormat, ...) OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK(2, 3);`
+ *
+ * The two argument index values indicate format string and first argument to check against it. They start at index 1
+ * for the first parameter in a function and at index 2 for the first parameter in a method.
+ *
+ * @param[in] aFmtIndex    The argument index of the format string.
+ * @param[in] aStartIndex  The argument index of the first argument to check against the format string.
  */
 
 // =========== TOOLCHAIN SELECTION : START ===========
@@ -122,6 +134,9 @@ extern "C" {
 #define OT_TOOL_PACKED_END __attribute__((packed))
 #define OT_TOOL_WEAK __attribute__((weak))
 
+#define OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK(aFmtIndex, aStartIndex) \
+    __attribute__((format(printf, aFmtIndex, aStartIndex)))
+
 #elif defined(__ICCARM__) || defined(__ICC8051__)
 
 // http://supp.iar.com/FilesPublic/UPDINFO/004916/arm/doc/EWARM_DevelopmentGuide.ENU.pdf
@@ -133,6 +148,8 @@ extern "C" {
 #define OT_TOOL_PACKED_END
 #define OT_TOOL_WEAK __weak
 
+#define OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK(aFmtIndex, aStartIndex)
+
 #elif defined(__SDCC)
 
 // Structures are packed by default in sdcc, as it primarily targets 8-bit MCUs.
@@ -141,6 +158,8 @@ extern "C" {
 #define OT_TOOL_PACKED_FIELD
 #define OT_TOOL_PACKED_END
 #define OT_TOOL_WEAK
+
+#define OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK(aFmtIndex, aStartIndex)
 
 #else
 
@@ -153,6 +172,8 @@ extern "C" {
 #define OT_TOOL_PACKED_END
 #define OT_TOOL_WEAK
 
+#define OT_TOOL_PRINTF_STYLE_FORMAT_ARG_CHECK(aFmtIndex, aStartIndex)
+
 #endif
 
 // =========== TOOLCHAIN SELECTION : END ===========
@@ -161,14 +182,12 @@ extern "C" {
  * @def OT_UNUSED_VARIABLE
  *
  * Suppress unused variable warning in specific toolchains.
- *
  */
 
 /**
  * @def OT_UNREACHABLE_CODE
  *
  * Suppress Unreachable code warning in specific toolchains.
- *
  */
 
 #if defined(__ICCARM__)
@@ -261,7 +280,6 @@ extern "C" {
  * @def OT_FALL_THROUGH
  *
  * Suppress fall through warning in specific compiler.
- *
  */
 #if defined(__cplusplus) && (__cplusplus >= 201703L)
 #define OT_FALL_THROUGH [[fallthrough]]
@@ -278,7 +296,6 @@ extern "C" {
 
 /**
  * @}
- *
  */
 
 #ifdef __cplusplus
